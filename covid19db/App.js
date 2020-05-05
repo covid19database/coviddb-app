@@ -44,7 +44,14 @@ export default function App() {
         <Text style={styles.copy}>Based on your data, you have not been nearby someone who tested positive for COVID-19.</Text>
         <ButtonLight
             onPress={() => {
-              alert('You tapped the button!');
+              fetch('http://127.0.0.1:5000/get-diagnosis-keys').then(
+                  (response) => response.json()
+                  .then((json) => {
+                      alert(json);
+                  }).catch((error) => {
+                      console.error(error);
+                  })
+              );
             }}
             text="Check for symptoms" />
         <ButtonBackgroundless
