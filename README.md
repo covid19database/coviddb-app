@@ -1,0 +1,2 @@
+# coviddb-app
+react native
