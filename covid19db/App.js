@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, TextInput, Link } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 const ButtonBackgroundless = (props) => {
@@ -23,7 +24,7 @@ const ButtonBackgroundless = (props) => {
  * Example onPress events:
  *
  *    () => { alert('You tapped the button!'); }
- *    () => navigate('HomeScreen')
+ *    () => navigate('WelcomeScreen')
  */
 // Example onPress events
 const ButtonLight = (props) => {
@@ -59,18 +60,95 @@ function UselessTextInput(props) {
     />
   );
 }
-
-function HomeScreen({ navigation }) {
+//<UselessTextInput placeholder={"Location"}/>
+//<UselessTextInput placeholder={"Date"} />
+//<UselessTextInput placeholder={"Time"} />
+function WelcomeScreen({ navigation }) {
 	return (
 		    <View style={styles.container}>
+		      <Text style={styles.title}>COVID-19 Contact Tracing</Text>
 		      <Text style={styles.heading}>Did you walk by a COVID patient?</Text>
-		      <Text style={styles.copy}>COVID-19 patients can take up to 14 days to show symptoms. Check if you've passed an at-risk space and time.</Text>
-		      <UselessTextInput placeholder={"Location"}/>
-		      <UselessTextInput placeholder={"Date"} />
-		      <UselessTextInput placeholder={"Time"} />
-		      <ButtonLight
-		                text="Check for contact"
-		                onPress={() => navigation.navigate('Reported Positive')}
+		      <Text style={styles.copy}>COVID-19 patients can take up to 14 days to show symptoms. Check if you've passed an at-risk space and time. 
+		      	This app anonymously tracks if you have been nearby someone who tested positive for COVID-19.</Text>
+		      <ButtonDark
+		                text="Next"
+		                onPress={() => navigation.navigate('Bluetooth Permissions')}
+		              />
+		    </View>
+	);
+}
+
+function BluetoothPermissionsScreen({ navigation }) {
+	return (
+		    <View style={styles.container}>
+		    <Icon name="bluetooth-b" style={styles.iconMain} />
+		    	<Text style={styles.heading}>Please enable Bluetooth</Text>
+		      <Text style={styles.copy}>This app needs Bluetooth to start anonymous contact tracing.</Text>
+		      <Text style={[styles.tiny, styles.marginBottom]}>This might slightly impact battery life.</Text>
+		      <Text style={[styles.link, styles.marginBottom]}
+			      onPress={() => Linking.openURL('http://google.com')}>
+			  How to enable Bluetooth
+			</Text>
+		      <ButtonDark
+		                text="Settings"
+		                onPress={() => navigation.navigate('Bluetooth Enabled')}
+		              />
+		    </View>
+	);
+}
+
+function BluetoothEnabledScreen({ navigation }) {
+	return (
+		    <View style={styles.container}>
+		    <Icon name="check" style={styles.iconMain} />
+		      <Text style={styles.heading}>Bluetooth enabled</Text>
+		      <Text style={styles.copy}>This app needs Bluetooth to start anonymous contact tracing.</Text>
+		      <Text style={[styles.tiny, styles.marginBottom]}>This might slightly impact battery life.</Text>
+		      <Text style={[styles.link, styles.marginBottom]}
+			      onPress={() => Linking.openURL('http://google.com')}>
+			  How does this work
+			</Text>
+		      <ButtonDark
+		                text="Continue"
+		                onPress={() => navigation.navigate('Notification Permissions')}
+		              />
+		    </View>
+	);
+}
+
+function NotificationPermissionsScreen({ navigation }) {
+	return (
+		    <View style={styles.container}>
+		    <Icon name="bell" style={styles.iconMain} />
+		      <Text style={styles.heading}>Enable notifications</Text>
+		      <Text style={styles.copy}>In order to receive important updates, you'll need to enable notifications.</Text>
+		      <Text style={[styles.tiny, styles.marginBottom]}>Notifications can be configured in Settings.</Text>
+		      <Text style={[styles.link, styles.marginBottom]}
+			      onPress={() => Linking.openURL('http://google.com')}>
+			  Open Settings
+			</Text>
+		      <ButtonDark
+		                text="Enable Notifications"
+		                onPress={() => navigation.navigate('Notification Enabled')}
+		              />
+		    </View>
+	);
+}
+
+function NotificationEnabledScreen({ navigation }) {
+	return (
+		    <View style={styles.container}>
+		    <Icon name="check" style={styles.iconMain} />
+		      <Text style={styles.heading}>Notifications enabled</Text>
+		      <Text style={styles.copy}>In order to receive important updates, you'll need to enable notifications..</Text>
+		      <Text style={[styles.tiny, styles.marginBottom]}>Notifications can be configured in Settings.</Text>
+		      <Text style={[styles.link, styles.marginBottom]}
+			      onPress={() => Linking.openURL('http://google.com')}>
+			  Open Settings
+			</Text>
+		      <ButtonDark
+		                text="Continue"
+		                onPress={() => navigation.navigate('Contact Confirmed')}
 		              />
 		    </View>
 	);
@@ -101,7 +179,7 @@ function NoContactScreen() {
 	            text="Turn off contact tracing" />
         </View>
 	  );
-	}
+}
 
 function ContactConfirmedScreen() {
 	  return (
@@ -159,7 +237,7 @@ export default function App() {
   return (
 		  <NavigationContainer>
 	      	<Stack.Navigator>
-	      		<Stack.Screen name="Home" component={HomeScreen} options={{ 
+	      		<Stack.Screen name="Welcome" component={WelcomeScreen} options={{ 
 	      				title: 'Welcome', 
 	      				headerRight: () => (
 		      	            <Button
@@ -169,6 +247,10 @@ export default function App() {
 		                  />
 	      				), 
 	      				}} />
+	      		<Stack.Screen name="Bluetooth Permissions" component={BluetoothPermissionsScreen} />
+	      		<Stack.Screen name="Bluetooth Enabled" component={BluetoothEnabledScreen} />
+	      		<Stack.Screen name="Notification Permissions" component={NotificationPermissionsScreen} />
+	      		<Stack.Screen name="Notification Enabled" component={NotificationEnabledScreen} />
 	      		<Stack.Screen name="No Contact" component={NoContactScreen} />
 	      		<Stack.Screen name="Contact Confirmed" component={ContactConfirmedScreen} />
 	      		<Stack.Screen name="Reported Positive" component={ReportedPositiveScreen} />
@@ -183,7 +265,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     //backgroundImage: 'linear-gradient(to bottom right, #05425b, #26a3d8)',
-    //color: '#fff',
+    backgroundColor: '#fff',
   },
   inputLight: {
 	    width:215,
@@ -212,6 +294,7 @@ const styles = StyleSheet.create({
   buttonDark: {
 	    width:215,
 	    height:45,
+	    marginTop: 10,
 	    marginBottom:10,
 	    borderRadius: 30,
 	    backgroundColor: '#111',
@@ -227,12 +310,15 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingBottom: 15,
     fontSize: 15,
-    //color: '#eee',
+  },
+  title: {
+	  fontWeight: 'bold',
+	  fontSize: 28,
+	  marginBottom: 20,
   },
   heading: {
     fontWeight: 'bold',
     fontSize: 17,
-    //color: '#fff',
   },
   copy: {
     fontSize: 15,
@@ -240,7 +326,7 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingTop: 10,
     paddingBottom:20,
-    //color: '#fff',
+    textAlign: "center"
   },
   contactBox: {
 	  textAlign: 'center',
@@ -258,5 +344,22 @@ const styles = StyleSheet.create({
   },
   underline: {
 	  textDecorationLine: 'underline',
+  },
+  link: {
+	 color: 'blue',
+	 textDecorationLine: 'underline',
+  },
+  marginBottom: {
+	  marginBottom: 10,
+  },
+  buttonBottom: {
+	  bottom: 0,
+  },
+  iconMain: {
+	 fontSize: 50,
+	 padding: 20,
+	 margin: 20,
+	 backgroundColor: '#eee',
+	 borderRadius: '50%',
   }
 });
