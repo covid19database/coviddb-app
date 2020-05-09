@@ -37,6 +37,17 @@ const ButtonLight = (props) => {
     );
 }
 
+const ButtonDark = (props) => {
+    return (
+      <TouchableOpacity
+          style={[styles.buttonDark, props.style]}
+          onPress={props.onPress}
+          underlayColor='#fff'>
+          <Text style={styles.buttonDarkText}>{props.text}</Text>
+      </TouchableOpacity>
+    );
+}
+
 function UselessTextInput(props) {
 	const [value, onChangeText] = React.useState('Location');
 	
@@ -59,13 +70,13 @@ function HomeScreen({ navigation }) {
 		      <UselessTextInput placeholder={"Time"} />
 		      <ButtonLight
 		                text="Check for contact"
-		                onPress={() => navigation.navigate('Details')}
+		                onPress={() => navigation.navigate('Reported Positive')}
 		              />
 		    </View>
 	);
 }
 
-function DetailsScreen() {
+function NoContactScreen() {
 	  return (
 	    <View style={styles.container}>
 	        <Text style={styles.heading}>No contact detected</Text>
@@ -82,12 +93,63 @@ function DetailsScreen() {
 	              );
 	            }}
 	            text="Check for symptoms" />
+	        <ButtonLight text="Learn more" /> 
 	        <ButtonBackgroundless
 	            onPress={() => {
 	                alert('Nawwwwww');
 	            }}
 	            text="Turn off contact tracing" />
         </View>
+	  );
+	}
+
+function ContactConfirmedScreen() {
+	  return (
+	    <View style={styles.container}>
+	        <View style={styles.contactBox}>
+		    	<Text style={styles.heading}>You have been nearby someone who tested positive.</Text>
+		        <Text style={styles.copy}>Based on your data, we found 4 encounters.</Text>
+		        <ButtonDark text="Upload your key" style={styles.center}/>
+		        <Text style={[styles.tiny, styles.underline]}>What is a key?</Text>
+	        </View>
+	        <ButtonLight
+	            onPress={() => {
+	              fetch('http://127.0.0.1:5000/get-diagnosis-keys').then(
+	                  (response) => response.json()
+	                  .then((json) => {
+	                      alert(json);
+	                  }).catch((error) => {
+	                      console.error(error);
+	                  })
+	              );
+	            }}
+	            text="Check for symptoms" />
+	        <ButtonLight text="Learn more" /> 
+	        <ButtonBackgroundless
+	            onPress={() => {
+	                alert('Nawwwwww');
+	            }}
+	            text="Turn off contact tracing" />
+      </View>
+	  );
+	}
+
+function ReportedPositiveScreen() {
+	  return (
+			  <View style={styles.container}>
+		        <View style={styles.contactBox}>
+			    	<Text style={styles.heading}>You have reported as COVID-19 positive.</Text>
+			        <Text style={styles.copy}>People who have been nearby you are notified.</Text>
+			        <ButtonDark text="Upload your key" style={styles.center}/>
+			        <Text style={[styles.tiny, styles.underline]}>What is a key?</Text>
+		        </View>
+		        <ButtonLight text="Learn more" /> 
+		        <ButtonBackgroundless
+		            onPress={() => {
+		                alert('Nawwwwww');
+		            }}
+		            text="Turn off contact tracing" />
+	      </View>
 	  );
 	}
 
@@ -107,7 +169,9 @@ export default function App() {
 		                  />
 	      				), 
 	      				}} />
-	      		<Stack.Screen name="Details" component={DetailsScreen} />
+	      		<Stack.Screen name="No Contact" component={NoContactScreen} />
+	      		<Stack.Screen name="Contact Confirmed" component={ContactConfirmedScreen} />
+	      		<Stack.Screen name="Reported Positive" component={ReportedPositiveScreen} />
 			 </Stack.Navigator>
 		</NavigationContainer>
   );
@@ -118,8 +182,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundImage: 'linear-gradient(to bottom right, #05425b, #26a3d8)',
-    color: '#fff',
+    //backgroundImage: 'linear-gradient(to bottom right, #05425b, #26a3d8)',
+    //color: '#fff',
   },
   inputLight: {
 	    width:215,
@@ -135,6 +199,7 @@ const styles = StyleSheet.create({
   buttonLight: {
     width:215,
     height:45,
+    marginBottom:10,
     borderRadius: 30,
     backgroundColor: '#E6E6E6',
     color: '#333333',
@@ -144,16 +209,30 @@ const styles = StyleSheet.create({
   buttonLightText: {
     fontSize: 17,
   },
+  buttonDark: {
+	    width:215,
+	    height:45,
+	    marginBottom:10,
+	    borderRadius: 30,
+	    backgroundColor: '#111',
+	    color: '#fff',
+	    alignItems: 'center',
+	    justifyContent: 'center',
+	  },
+	  buttonDarkText: {
+		    fontSize: 17,
+		    color: '#fff',
+		  },
   buttonBackgroundlessText: {
     paddingTop: 15,
     paddingBottom: 15,
     fontSize: 15,
-    color: '#eee',
+    //color: '#eee',
   },
   heading: {
     fontWeight: 'bold',
     fontSize: 17,
-    color: '#fff',
+    //color: '#fff',
   },
   copy: {
     fontSize: 15,
@@ -161,6 +240,23 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingTop: 10,
     paddingBottom:20,
-    color: '#fff',
+    //color: '#fff',
+  },
+  contactBox: {
+	  textAlign: 'center',
+	  padding: 20,
+	  backgroundColor: "#f9dfdd",
+	  borderRadius: 10,
+	  marginBottom: 10,
+  },
+  center: {
+	  marginLeft: 'auto',
+	  marginRight: 'auto',
+  },
+  tiny: {
+	  fontSize: 13,
+  },
+  underline: {
+	  textDecorationLine: 'underline',
   }
 });
